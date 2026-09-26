@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
@@ -22,8 +23,12 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.time.Duration;
+import java.util.List;
 
 /**
  * Session based security (no JWT): the server keeps the login in the HTTP session,
@@ -39,7 +44,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JsonSecurityHandlers handlers,
                                                    SecurityContextRepository contextRepository,
                                                    TokenBasedRememberMeServices rememberMeServices) throws Exception {
-        http.csrf(this::csrf)
+        http.cors(Customizer.withDefaults())
+                .csrf(this::csrf)
                 .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class)
                 .securityContext(context -> context.securityContextRepository(contextRepository))
                 .authorizeHttpRequests(this::rules)
@@ -74,6 +80,20 @@ public class SecurityConfig {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(encoder);
         return new ProviderManager(provider);
+    }
+
+    /** Addresses allowed to call the API from a browser page on another address (app.cors.allowed-origins). */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(@Value("${app.cors.allowed-origins}") List<String> origins) {
+        CorsConfiguration cors = new CorsConfiguration();
+        cors.setAllowedOriginPatterns(origins);
+        cors.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        cors.setAllowedHeaders(List.of("*"));
+        cors.setAllowCredentials(true);
+        cors.setMaxAge(Duration.ofHours(1));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/api/**", cors);
+        return source;
     }
 
     /** Every login is remembered; the cookie is cleared on sign out. */
