@@ -32,6 +32,8 @@ public class ClinicSettings extends BaseEntity {
     private String sidebarMode = "FULL";
     private BigDecimal consultationFee = BigDecimal.ZERO;
     private int followUpValidityDays = 30;
+    /** Seconds between automatic list refreshes on every device; 0 = off. */
+    private int autoRefreshSeconds = 10;
     private String logoPath;
     private int logoWidth;
     private int logoHeight;

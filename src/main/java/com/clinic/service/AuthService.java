@@ -31,6 +31,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,7 @@ public class AuthService {
     private final ActivityService activityService;
     private final PasswordEncoder passwordEncoder;
     private final SecurityContextRepository contextRepository;
+    private final RememberMeServices rememberMeServices;
     private final AuthenticationManager authenticationManager;
     private final ChangeSessionIdAuthenticationStrategy sessionStrategy = new ChangeSessionIdAuthenticationStrategy();
 
@@ -78,6 +80,7 @@ public class AuthService {
         request.getSession(true);
         sessionStrategy.onAuthentication(auth, request, response);
         contextRepository.saveContext(context, request, response);
+        rememberMeServices.loginSuccess(request, response, auth);
         return me();
     }
 

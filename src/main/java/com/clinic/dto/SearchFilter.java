@@ -16,7 +16,8 @@ import java.util.Arrays;
 @Data
 public class SearchFilter {
 
-    private static final int MAX_PAGE_SIZE = 100;
+    /** Upper bound for one page; large enough for a whole busy day's queue (up to 500 patients). */
+    private static final int MAX_PAGE_SIZE = 500;
 
     private String search;
     private String status;
@@ -45,6 +46,14 @@ public class SearchFilter {
             LocalDate today = LocalDate.now();
             from = today.withDayOfMonth(1);
             to = today.withDayOfMonth(today.lengthOfMonth());
+        }
+        return this;
+    }
+
+    /** Uses this ordering when the caller did not ask for one. */
+    public SearchFilter withDefaultSort(String defaultSort) {
+        if (!hasSort()) {
+            sort = defaultSort;
         }
         return this;
     }

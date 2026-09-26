@@ -71,6 +71,11 @@ public class ClinicSettingsDto extends AuditedDto {
     @Max(value = 365, message = "Follow-up validity must be at most 365 days")
     private Integer followUpValidityDays;
 
+    /** Seconds between automatic list refreshes on every device; 0 = off. */
+    @Min(value = 0, message = "Auto-refresh cannot be negative")
+    @Max(value = 600, message = "Auto-refresh must be at most 600 seconds")
+    private Integer autoRefreshSeconds;
+
     @NotNull(message = "Logo width is required")
     @Min(value = 20, message = "Logo width must be at least 20 px")
     @Max(value = 600, message = "Logo width must be at most 600 px")

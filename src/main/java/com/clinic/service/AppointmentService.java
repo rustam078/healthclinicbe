@@ -52,6 +52,8 @@ public class AppointmentService {
 
     private static final String TYPE = "APPOINTMENT";
     private static final String REQUEST_TYPE = "DELETE_REQUEST";
+    /** Reports list newest first; matches the (appointment_date, token_number) index, so years of data stay fast. */
+    private static final String REPORT_SORT = "appointmentDate,desc;tokenNumber,desc";
 
     private final AppointmentRepository repository;
     private final DeleteRequestRepository requestRepository;
@@ -137,7 +139,7 @@ public class AppointmentService {
 
     @Transactional(readOnly = true)
     public ReportDto<AppointmentDto> report(SearchFilter filter) {
-        filter.withDefaultPeriod();
+        filter.withDefaultPeriod().withDefaultSort(REPORT_SORT);
         Specification<Appointment> spec = Specs.all(Specs.notDeleted(), filterSpec(filter));
         Map<String, Map<String, Long>> breakdown = new LinkedHashMap<>();
         breakdown.put("type", reportQueries.countBy(Appointment.class, spec, "type"));

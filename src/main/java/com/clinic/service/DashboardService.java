@@ -33,6 +33,8 @@ import java.util.Map;
 public class DashboardService {
 
     private static final int LIST_SIZE = 6;
+    /** The whole of today's queue (the dashboard card pages through it five at a time). */
+    private static final int DAY_QUEUE_LIMIT = 500;
 
     private final AppointmentRepository appointmentRepository;
     private final DeleteRequestRepository deleteRequestRepository;
@@ -87,7 +89,7 @@ public class DashboardService {
         SearchFilter filter = listFilter(null);
         filter.setFrom(LocalDate.now());
         filter.setTo(LocalDate.now());
-        filter.setSize(100);
+        filter.setSize(DAY_QUEUE_LIMIT);
         return appointmentService.page(filter).content();
     }
 
