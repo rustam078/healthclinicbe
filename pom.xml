@@ -88,6 +88,7 @@
     </profiles>
 
     <build>
+        <finalName>my-clinic.jar</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
