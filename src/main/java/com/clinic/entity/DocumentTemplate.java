@@ -26,8 +26,15 @@ public class DocumentTemplate extends BaseEntity {
     private int headerHeight;
     private int logoAreaWidth;
     private int logoAreaHeight;
+    /** Left and right page padding. */
     private int padding;
+    private int paddingTop;
+    private int paddingBottom;
     private int margin;
+    /** Space above the header content. */
+    private int headerPaddingTop;
+    /** Alignment of the clinic details in the header: AUTO (follows the logo position), LEFT, CENTER, RIGHT. */
+    private String headerTextAlign = "AUTO";
     private boolean showLogo;
     private boolean showFooter;
     private String footerText;

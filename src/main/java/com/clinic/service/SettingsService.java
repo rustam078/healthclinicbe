@@ -112,6 +112,9 @@ public class SettingsService {
         TemplateType templateType = Enums.require(TemplateType.class, type);
         DocumentTemplate template = template(templateType);
         mapper.updateEntity(dto, template);
+        if (template.getHeaderTextAlign() == null) {
+            template.setHeaderTextAlign("AUTO");
+        }
         return saveTemplate(template, Enums.label(templateType) + " template updated");
     }
 
@@ -186,8 +189,9 @@ public class SettingsService {
 
     /** The logo area must fit inside the header and the printable width. */
     private void ensureLogoFits(TemplateDto dto) {
-        if (dto.getLogoAreaHeight() > dto.getHeaderHeight()) {
-            throw BusinessException.badRequest("Logo area height cannot be larger than the header height");
+        int topSpace = dto.getHeaderPaddingTop() == null ? 0 : dto.getHeaderPaddingTop();
+        if (dto.getLogoAreaHeight() + topSpace > dto.getHeaderHeight()) {
+            throw BusinessException.badRequest("The logo and the top space do not fit in the header height");
         }
         if (dto.getLogoAreaWidth() > dto.getPageWidth() - 2 * dto.getPadding()) {
             throw BusinessException.badRequest("Logo area width does not fit inside the page width and padding");

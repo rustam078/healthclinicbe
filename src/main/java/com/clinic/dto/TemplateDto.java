@@ -50,10 +50,28 @@ public class TemplateDto extends AuditedDto {
     @Max(value = 300, message = "Logo area height must be at most 300 px")
     private Integer logoAreaHeight;
 
+    /** Left and right page padding. */
     @NotNull(message = "Padding is required")
     @Min(value = 0, message = "Padding cannot be negative")
     @Max(value = 100, message = "Padding must be at most 100 px")
     private Integer padding;
+
+    @Min(value = 0, message = "Top padding cannot be negative")
+    @Max(value = 200, message = "Top padding must be at most 200 px")
+    private Integer paddingTop;
+
+    @Min(value = 0, message = "Bottom padding cannot be negative")
+    @Max(value = 200, message = "Bottom padding must be at most 200 px")
+    private Integer paddingBottom;
+
+    /** Space above the header content. */
+    @Min(value = 0, message = "Space above the header cannot be negative")
+    @Max(value = 200, message = "Space above the header must be at most 200 px")
+    private Integer headerPaddingTop;
+
+    /** Alignment of the clinic details in the header; AUTO follows the logo position. */
+    @Pattern(regexp = "AUTO|LEFT|CENTER|RIGHT", message = "Header text align must be AUTO, LEFT, CENTER or RIGHT")
+    private String headerTextAlign;
 
     @NotNull(message = "Margin is required")
     @Min(value = 0, message = "Margin cannot be negative")
@@ -83,12 +101,16 @@ public class TemplateDto extends AuditedDto {
         dto.setLogoAreaWidth(dims[3]);
         dto.setLogoAreaHeight(dims[4]);
         dto.setPadding(dims[5]);
+        dto.setPaddingTop(dims[5]);
+        dto.setPaddingBottom(dims[5]);
         dto.setMargin(dims[6]);
         return withFlags(dto, footer);
     }
 
     private static TemplateDto withFlags(TemplateDto dto, String footer) {
         dto.setShowLogo(true);
+        dto.setHeaderPaddingTop(0);
+        dto.setHeaderTextAlign("AUTO");
         dto.setShowFooter(true);
         dto.setFooterText(footer);
         dto.setAccentColor("#0f766e");
